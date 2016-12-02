@@ -2,3 +2,5 @@
 UTC/bin/
 XRandom/XRandom-CSharp/XRandom/obj/
 XRandom/XRandom-CSharp/XRandom/bin/
+UTC/.idea
+*.iml
