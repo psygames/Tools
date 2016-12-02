@@ -95,38 +95,43 @@ public class UTC implements Comparable<UTC>
         millisecond += adds % 1000;
         carry = millisecond < 0 ? -1 : millisecond / 1000;
         millisecond = (millisecond + 1000) % 1000;
-        adds /= 1000;
+        adds /= 1000L;
 
         // second
         second += adds % 60 + carry;
         carry = second < 0 ? -1 : second / 60;
         second = (second + 60) % 60;
-        adds /= 60;
+        adds /= 60L;
 
         // minute
         minute += adds % 60 + carry;
         carry = minute < 0 ? -1 : minute / 60;
         minute = (minute + 60) % 60;
-        adds /= 60;
+        adds /= 60L;
 
         // hour
         hour += adds % 24 + carry;
         carry = hour < 0 ? -1 : hour / 24;
         hour = (hour + 24) % 24;
-        adds /= 24;
+        adds /= 24L;
 
-        // 以下是核心代码,有点乱,待加注释
-        adds += carry;
+        // 以下是核心代码
+        adds += carry;											// 天数进位
         int[] mdInterval = getMonthDaysTotalInterval();
-        int mstart = (year % 400) * 12 + month - 1;
-        adds += mdInterval[mstart] + day - 1;
-        int m400Incr = year / 400 + (int) (adds / 146097); //400*12月的天数总和=146097
-        adds %= 146097;
-        int mindex = divFind(mdInterval, (int) adds, 0, mdInterval.length - 1);
+        int mstart = (year % 400) * 12 + month - 1;				// 计算出当前年月份在 400 年月份循环中的位置
+        adds += mdInterval[mstart] + day - 1;					// 天数加上当前年的 400年循环天数 余数
+        int m400Incr = year / 400 + (int) (adds / 146097); 		// 计算出400年循环的次数，146097为400年天数总和，这里没考虑负数天数的影响，下边处理哦
+        adds %= 146097;											// 400年中的天数
+        if(adds < 0)											// 计算天数为负数时候，需要借位，
+        {
+        	adds += 146097;
+        	m400Incr -= 1;
+        }
+        int mindex = divFind(mdInterval, (int) adds, 0, mdInterval.length - 1); // 找到天数在 400 年月天数中的所处位置
 
-        day = (int) adds - mdInterval[mindex] + 1;
-        month = mindex % 12 + 1;
-        year = 400 * m400Incr + mindex / 12;
+        day = (int) adds - mdInterval[mindex] + 1;				// 计算天数
+        month = mindex % 12 + 1;								// 月份
+        year = 400 * m400Incr + mindex / 12;					// 年份	
     }
 
     private int divFind(int[] array, int value, int from, int to)
