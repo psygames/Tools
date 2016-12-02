@@ -120,7 +120,7 @@ public class UTC implements Comparable<UTC>
         int[] mdInterval = getMonthDaysTotalInterval();
         int mstart = (year % 400) * 12 + month - 1;				// 计算出当前年月份在 400 年月份循环中的位置
         adds += mdInterval[mstart] + day - 1;					// 天数加上当前年的 400年循环天数 余数
-        int m400Incr = year / 400 + (int) (adds / 146097); 		// 计算出400年循环的次数，146097为400年天数总和，这里没考虑负数天数的影响，下边处理哦
+        int m400Incr = year / 400 + (int) (adds / 146097);		// 计算出400年循环的次数，146097为400年天数总和，这里没考虑负数天数的影响，下边处理哦
         adds %= 146097;											// 400年中的天数
         if(adds < 0)											// 计算天数为负数时候，需要借位，
         {
